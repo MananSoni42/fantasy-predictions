@@ -12,6 +12,7 @@ def get_all_match_urls(season):
     Get match URLS and basic details from a list of links for each season.
     This list is defined in `utils.py`
     '''
+
     url = season_url[season]
     r = requests.get(url)
     soup = BeautifulSoup(r.content, 'lxml')
@@ -77,18 +78,23 @@ def process_players(match, scorecard):
     '''
     global player_id
     players = set()
-    for batsman in scorecard['batsman']:
+    for batsman in scorecard['batsman'] + scorecard['bowler']:
         name = clean(batsman[0])
         if name and name != 'extras':
             players.add(name)
+
+    for batsman in scorecard['batsman']:
+        name = clean(batsman[0])
+        if name and name != 'extras':
             out,_,wicket_players = get_wicket_info(batsman[1])
             for player in wicket_players:
-                player = clean(alt_players[clean(player)] if alt_players.get(clean(player),None) else player)
-                players.add(player)
-    for bowler in scorecard['bowler']:
-        name = clean(bowler[0])
-        if name:
-            players.add(name)
+                found, close_player = find_closest(player, players)
+                if found:
+                    players.add(close_player)
+                elif clean(player) in alt_players:
+                    players.add(alt_players[clean(player)])
+                else:
+                    print(f'player name error: {player} did not match \nclosest: {close_player}')
 
     data_row = [0]*20
     data = dict()
@@ -117,12 +123,17 @@ def process_players(match, scorecard):
             data[id][7] = int(batsman[6])
             data[id][8] = float(batsman[7])
             for player in wicket_players:
-                player = clean(alt_players[clean(player)] if alt_players.get(clean(player),None) else player)
-                id = player_id[player]
-                if type == 'catch':
-                    data[id][17] += 1
-                elif type == 'run-out':
-                    data[id][18] += 1
+                found, close_player = find_closest(player, players)
+                if found:
+                    id = player_id[close_player]
+                    if type == 'catch':
+                        data[id][17] += 1
+                    elif type == 'run-out':
+                        data[id][18] += 1
+                elif clean(player) in alt_players:
+                    id = player_id[alt_players[clean(player)]]
+                else:
+                    print(f'player name error: {player} did not match \nclosest: {close_player}')
 
     for bowler in scorecard['bowler']:
         name = clean(bowler[0])
@@ -142,7 +153,7 @@ def ipl_season_csv():
     '''
     Combine everything to create csv files from a list of season URLS
     '''
-    
+
     header = ['player-id', 'season', 'match'] + \
              ['batting-runs', 'balls', 'out', '4s', '6s', 'sr'] + \
              ['overs', 'maiden', 'bowling-runs', 'wickets', 'econ', '0s', '4s', '6s'] + \
@@ -157,10 +168,13 @@ def ipl_season_csv():
         matches = get_all_match_urls(season)
         for match in matches:
             time.sleep(0.2)
-            print(f'\t Match - {match["number"]}')
-            scorecard = get_espn_scorecard(match['url'])
-            metadata.append([match['season'], match['number'], match['status'], *get_toss_info(scorecard['toss']), scorecard['stadium']])
-            data.extend(process_players(match,scorecard))
+            try:
+                scorecard = get_espn_scorecard(match['url'])
+                metadata.append([match['season'], match['number'], match['status'], *get_toss_info(scorecard['toss']), scorecard['stadium']])
+                data.extend(process_players(match,scorecard))
+                print(f'\t Match - {match["number"]} success')
+            except:
+                print(f'\t Match - {match["number"]} fail')
 
     with open('data-match.csv', 'w') as f:
         writer = csv.writer(f)

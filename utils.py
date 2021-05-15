@@ -1,5 +1,7 @@
 import re
 import json
+from difflib import SequenceMatcher
+
 
 ''' cleans a string (removes whitespace, extra characters, etc '''
 clean = lambda s: s.lower().replace('(c)','').replace('†','').replace(u'\xa0', u' ').rstrip().lstrip().replace(' ','-')
@@ -55,6 +57,24 @@ get_num = lambda x: int(''.join(c for c in x if c.isdigit()))
 player_id = {
     'next-id': 1,
 }
+
+def find_closest(name, players):
+    close = [similar_name(name, player) for player in players]
+    closest_name = max(close)
+    inds = [i for i,c in enumerate(close) if c == closest_name]
+    players = tuple(players)
+    if (len(inds) == 1):
+        return True, players[inds[0]]
+    else:
+        return False, [players[i] for i in inds]
+
+def similar(a, b):
+    return SequenceMatcher(None, a, b).ratio()
+
+def similar_name(name1, name2):
+    if len(name2.split('-')) < len(name1.split('-')):
+        name2,name1 = name1,name2
+    return sum([max(similar(ch1,ch2) for ch2 in name2.split('-')) for ch1 in name1.split('-')])/len(name1.split('-'))
 
 ''' alternate player names '''
 with open('player_alt.json') as f:
