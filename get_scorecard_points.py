@@ -8,6 +8,10 @@ from bs4 import BeautifulSoup
 from utils import *
 
 def get_all_match_urls(season):
+    '''
+    Get match URLS and basic details from a list of links for each season.
+    This list is defined in `utils.py`
+    '''
     url = season_url[season]
     r = requests.get(url)
     soup = BeautifulSoup(r.content, 'lxml')
@@ -29,7 +33,9 @@ def get_all_match_urls(season):
     return matches
 
 def get_espn_scorecard(match_url):
-
+    '''
+    Creates a basic scorecard (dictionary) from a URL for the match (from ESPN cricinfo)
+    '''
     r = requests.get(match_url)
     soup = BeautifulSoup(r.content, 'lxml')
 
@@ -64,6 +70,11 @@ def get_espn_scorecard(match_url):
     return scorecard
 
 def process_players(match, scorecard):
+    '''
+    Convert a given scorecard into data format that is compatible with the CSV
+    Each player has a unique player id (stored in data-players.json)
+    Returns a 2-d array
+    '''
     global player_id
     players = set()
     for batsman in scorecard['batsman']:
@@ -128,6 +139,10 @@ def process_players(match, scorecard):
     return list(data.values())
 
 def ipl_season_csv():
+    '''
+    Combine everything to create csv files from a list of season URLS
+    '''
+    
     header = ['player-id', 'season', 'match'] + \
              ['batting-runs', 'balls', 'out', '4s', '6s', 'sr'] + \
              ['overs', 'maiden', 'bowling-runs', 'wickets', 'econ', '0s', '4s', '6s'] + \
@@ -144,7 +159,7 @@ def ipl_season_csv():
             time.sleep(0.2)
             print(f'\t Match - {match["number"]}')
             scorecard = get_espn_scorecard(match['url'])
-            metadata.append([match['season'], match['number'], match['status'], *get_toss_info(scorecard['toss'])])
+            metadata.append([match['season'], match['number'], match['status'], *get_toss_info(scorecard['toss']), scorecard['stadium']])
             data.extend(process_players(match,scorecard))
 
     with open('data-match.csv', 'w') as f:
