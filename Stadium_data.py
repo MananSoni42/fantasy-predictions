@@ -11,48 +11,52 @@ stadium_ids={
     1:"MAChidambaram",
     2:"narendrimodi",
     3:"wankhede",
-    #4:"mchinnaswamy",
-    #5:"edengardensstats",
+    4:"mchinnaswamy",
+    5:"edengardensstats",
+}
+
+id2tag = {
+    0: { 'std-id': 0, 'table-start': 1, '2021': True },
+    1: { 'std-id': 3, 'table-start': 1, '2021': True },
+    2: { 'std-id': 4, 'table-start': 1, '2021': True },
+    3: { 'std-id': 5, 'table-start': 1, '2021': True },
+    4: { 'std-id': 2, 'table-start': 0, '2021': False },
+    5: { 'std-id': 1, 'table-start': 0, '2021': False },
 }
 
 def stadium_records(stadium_url):
     r = requests.get(stadium_url)
     soup = BeautifulSoup(r.content, 'lxml')
-    stadium_record={
-        'stadium_name':[],
-        'Bat_Statistic':[],
-        'Bat_All-time':[],
-        'Bat_2021':[],
-        'Bowl_Statistic':[],
-        'Bowl_All-time':[],
-        'Bowl_2021':[],
-    }
-    current_header=[]
+    stadium_record = []
     tag = soup.find_all('h2')
-    current_header.append(tag[5].text)
-     
-    stadium_record['stadium_name'].append(current_header)
-    for stid in stadium_ids:
-        text1 = soup.find('figure',id=stadium_ids[stid])
-        for i in range(1,9):
-            stadium_record['Bat_Statistic'].append(text1.table.tbody('tr')[i]('td')[0].text)
-            stadium_record['Bat_All-time'].append(text1.table.tbody('tr')[i]('td')[1].text)
-            stadium_record['Bat_2021'].append(text1.table.tbody('tr')[i]('td')[2].text)
-    #for table in soup('table'):
-        #if table.get('class',[]):
-     #   print('hi')
-     #   stadium_record['Bat_Statistic'].append(table.tbody('tr')[0]('td')[0].text)
-     #   stadium_record['Bat_All-time'].append(table.tbody('tr')[0]('td')[1].text)
-     #   stadium_record['Bat_2021'].append(table.tbody('tr')[0]('td')[2].text)
-    return stadium_record
-data=[]   
-url='https://t20-head-to-head.com/statistics-by-ipl-venue/'
-stadium_record_store=stadium_records(url)
-stadium_headers=['stadium_name','batting_statistic','batting_all_time','Batting_2021']
-data.append([stadium_record_store['stadium_name'],stadium_record_store['Bat_Statistic'],stadium_record_store['Bat_All-time'],stadium_record_store['Bat_2021']])
 
+    for stid in stadium_ids:
+        row = []
+        row.append(tag[ id2tag[stid]['std-id'] ].text)
+        text1 = soup.find('figure',id=stadium_ids[stid])
+        for i in range(id2tag[stid]['table-start'], id2tag[stid]['table-start']+8):
+            #print(stid,i)
+            try:
+                row.append(text1.table.tbody('tr')[i]('td')[1].text)
+                if id2tag[stid]['2021']:
+                    row.append(text1.table.tbody('tr')[i]('td')[2].text)
+                else:
+                    row.append('-')
+            except:
+                print(text1.table.tbody.prettify())
+        #row = [row[0], *row[1], *row[2]]
+        stadium_record.append(row)
+    return stadium_record
+
+url='https://t20-head-to-head.com/statistics-by-ipl-venue/'
+
+stadium_headers = [ 'Stadium name' ]
+template_header = ['Average first innings score', 'Average first innings winning score', '% Teams winning batting first', '% Teams winning chasing', 'balls per 4 scored', 'balls per 6 scored ', 'Average powerplay score', 'Average death overs (last 5) score']
+for header in template_header:
+    for i in range(2):
+        stadium_headers.append('All time ' + header if i%2==0 else '2021 ' + header)
 
 with open('stadium_record.csv', 'w') as f:
         writer = csv.writer(f)
         writer.writerow(stadium_headers)
-        writer.writerows(data)
+        writer.writerows(stadium_records(url))
