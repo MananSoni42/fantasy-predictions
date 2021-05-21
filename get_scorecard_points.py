@@ -40,11 +40,21 @@ def get_espn_scorecard(match_url):
     r = requests.get(match_url)
     soup = BeautifulSoup(r.content, 'lxml')
 
+    squad = {
+        0: {
+            'wk': '',
+            'players': set(),
+        },
+        1: {
+            'wk': '',
+            'players': set(),
+        },
+    }
+    innings = 0
+
     scorecard = {
         'batsman': [],
-        'batsman_header': [],
         'bowler': [],
-        'bowler_header': [],
         'toss': '',
         'stadium': '',
     }
@@ -54,12 +64,12 @@ def get_espn_scorecard(match_url):
             scorecard['toss'] = table.tbody('tr')[1]('td')[1].text
             scorecard['stadium'] = table.tbody.tr.td.text
         elif table.get('class',[]) and ('batsman' in table['class'] or 'bowler' in table['class']):
-            if not scorecard['batsman_header'] and 'batsman' in table['class']:
-                scorecard['batsman_header'] = [h.text for h in table.thead.tr('th')]
-            if not scorecard['bowler_header'] and 'bowler' in table['class']:
-                scorecard['bowler_header'] = [h.text for h in table.thead.tr('th')]
-
             for row in table.tbody('tr'):
+                player = clean_not_wk(row.td.text)
+                if player and player!='extras' and 'batsman' in table['class']:
+                    if '†' in player:
+                        squad[innings//2]['wk'] = clean(player)
+                    squad[innings//2]['players'].add(clean(player))
                 curr_row = []
                 for col in row('td'):
                     curr_row.append(col.text)
@@ -68,7 +78,18 @@ def get_espn_scorecard(match_url):
                 else:
                     scorecard['bowler'].append(curr_row)
 
-    return scorecard
+            try:
+                for pl in table.tfoot('tr')[1]('a'):
+                    player = clean_not_wk(pl.text)
+                    if player and player!='extras':
+                        if '†' in player:
+                            squad[innings//2]['wk'] = clean(player)
+                        squad[innings//2]['players'].add(clean(player))
+            except:
+                pass
+            innings += 1
+
+    return scorecard, squad
 
 def process_players(match, scorecard):
     '''
@@ -189,10 +210,11 @@ def ipl_season_csv():
     with open('data-players.json', 'w') as f:
         json.dump(player_id, f, indent=4)
 
-#matches = get_all_match_urls(2021)
-#match = matches[-1]
-#scorecard = get_espn_scorecard(match['url'])
+matches = get_all_match_urls(2021)
+match = matches[-1]
+scorecard,squad = get_espn_scorecard(match['url'])
+pprint(squad)
 #print(match)
 #print(scorecard)
 #pprint(process_players(match,scorecard))
-ipl_season_csv()
+#ipl_season_csv()
