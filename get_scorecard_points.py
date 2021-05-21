@@ -155,7 +155,7 @@ def process_players(match, scorecard, squad):
                         if type == 'catch':
                             data[id][17] += 1
                         elif type == 'run-out':
-                            if name == squad[innings]['wk']:
+                            if id == squad[1-innings]['wk']:
                                 data[id][19] += 1
                             else:
                                 data[id][18] += 1
@@ -164,7 +164,7 @@ def process_players(match, scorecard, squad):
                         if type == 'catch':
                             data[id][17] += 1
                         elif type == 'run-out':
-                            if name == squad[innings]['wk']:
+                            if id == squad[1-innings]['wk']:
                                 data[id][19] += 1
                             else:
                                 data[id][18] += 1
@@ -227,10 +227,12 @@ def ipl_season_csv():
         writer.writerows(metadata)
 
 '''
-matches = get_all_match_urls(2017)
-match = matches[-29]
+matches = get_all_match_urls(2021)
+match = matches[-1]
 scorecard,squad = get_espn_scorecard(match['url'])
-pprint(process_players(match,scorecard,squad))
+data = process_players(match,scorecard,squad)
+for row in data:
+    print(row)
 '''
 
 ipl_season_csv()
