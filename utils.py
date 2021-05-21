@@ -5,7 +5,7 @@ from difflib import SequenceMatcher
 
 ''' cleans a string (removes whitespace, extra characters, etc '''
 clean = lambda s: s.lower().replace('(c)','').replace('†','').replace(u'\xa0', u' ').rstrip().lstrip().replace(' ','-').rstrip('-')
-clean_not_wk = lambda s: s.lower().replace('(c)','').replace(u'\xa0', u' ').rstrip().lstrip().replace(' ','-')
+clean_not_wk = lambda s: s.lower().replace('(c)','').replace(u'\xa0', u' ').rstrip().rstrip(',').lstrip().replace(' ','-')
 
 ''' Convert string of toss into which team won it and decided to bat/bowl '''
 get_toss_info = lambda toss: (clean(toss.split(',')[0]), 'bat' if 'bat' in toss.split() else 'bowl')
@@ -20,7 +20,7 @@ def get_wicket_info(wicket_str):
         - players involved in the wicket
     '''
     wicket_str = wicket_str.rstrip().lstrip().lower().replace('†','')
-    run_out = re.search(r'\(([a-z\s/]+)\)', wicket_str)
+    run_out = re.search(r'\(([a-z\s/-]+)\)', wicket_str)
     catch = re.search(r'c(?:\s*&\s*b)? (\w+)', wicket_str)
     lbw = re.search(r'lbw',wicket_str)
     bowled = re.search(r'b ([a-z\s]+)',wicket_str)
@@ -46,22 +46,17 @@ Add ESPN cricinfo URL for a specific IPL season
 season_url = {
     2021: 'https://www.espncricinfo.com/series/ipl-2021-1249214/match-results',
     2020: 'https://www.espncricinfo.com/series/ipl-2020-21-1210595/match-results',
-    #2019: 'https://www.espncricinfo.com/series/ipl-2019-1165643/match-results',
-    #2018: 'https://www.espncricinfo.com/series/ipl-2018-1131611/match-results',
-    #2017: 'https://www.espncricinfo.com/series/ipl-2017-1078425/match-results',
+    2019: 'https://www.espncricinfo.com/series/ipl-2019-1165643/match-results',
+    2018: 'https://www.espncricinfo.com/series/ipl-2018-1131611/match-results',
+    2017: 'https://www.espncricinfo.com/series/ipl-2017-1078425/match-results',
 }
 
 '''Convert ordinal string to number (eg: 4th -> 4)'''
 get_num = lambda x: int(''.join(c for c in x if c.isdigit()))
 
-''' list of player names with their IDs'''
-player_id = {
-    'next-id': 1,
-}
 
-
-def find_closest(name, curr_inn, inn1_players, inn2_players):
-    pass
+def find_closest_with_inn(name, curr_inn, squad):
+    return find_closest(name, squad[1-curr_inn]['players'])
 
 def find_closest(name, players):
     close = [similar_name(name, player) for player in players]
