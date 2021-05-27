@@ -3,16 +3,10 @@ from pprint import pprint
 from utils import clean
 
 def get_fantasy_points(row, role):
-    '''
-    Need to add
-    - Bonnus for bowled / lbw
-    - Bonus for run-out direct hit
-    - Bonus for SR / ER
-    '''
 
     points = 0
-    # batting
 
+    # batting
     runs,out = int(row[3]), int(row[5])
     if role in ['bat', 'all'] and runs == 0 and out == 1:
         points -= 2
@@ -28,8 +22,8 @@ def get_fantasy_points(row, role):
         points += 4
 
     # bowling
-    maiden, runs, wickets, econ = int(row[10]), int(row[11]), int (row[12]), float(row[13])
-    points += 25*wickets + 12*maiden
+    maiden, runs, wickets, bowled, lbw = int(row[10]), int(row[11]), int (row[12]), int(row[13]), int (row[14])
+    points += 25*wickets + 12*maiden + 8*bowled + 8*lbw
     if wickets >=5:
         points += 16
     elif wickets >=4:
@@ -38,12 +32,43 @@ def get_fantasy_points(row, role):
         points += 4
 
     # fielding
-    catches, runout, stumping = int(row[-3]), int(row[-2]), int(row[-1])
-    points += 8*catches + 6*runout + 12*stumping
+    catches, stumping, runout_direct, runout = int(row[-4]), int(row[-3]), int(row[-2]), int(row[-1])
+    points += 8*catches + 12*runout_direct + 6*runout + 12*stumping
     if catches >= 3:
         points += 4
 
     # other
+    # Economy
+    overs, econ = float(row[9]), float(row[15])
+    if overs >= 2:
+        if econ < 5:
+            points += 6
+        elif econ < 6:
+            points += 4
+        elif econ < 7:
+            points += 2
+        elif econ > 12:
+            points -= 6
+        elif econ > 11:
+            points -= 4
+        elif econ > 10:
+            points -= 2
+
+    # SR
+    balls, sr = int(row[4]), float(row[8])
+    if role in ['bat','all'] and balls >= 10:
+        if sr > 170:
+            points += 6
+        elif sr > 150:
+            points += 4
+        elif sr > 130:
+            points += 2
+        elif sr < 50:
+            points -= 6
+        elif sr < 60:
+            points -= 4
+        elif sr < 70:
+            points -= 2
 
     return points
 

@@ -125,8 +125,9 @@ def process_players(match, scorecard, squad):
     Each player has a unique player id (stored in data-players.json)
     Returns a 2-d array
     '''
-    data_row = [0]*20
+    data_row = [0]*23
     data = dict()
+    matched_players = []
 
     for innings in [0,1]:
         for player in squad[innings]['players']:
@@ -138,7 +139,27 @@ def process_players(match, scorecard, squad):
             name = clean(batsman[0])
             if name and name != 'extras':
                 id = name
-                out, type, wicket_players = get_wicket_info(batsman[1])
+                out, type, wicket_players, bowler = get_wicket_info(batsman[1])
+                bowler = clean(bowler)
+                if bowler:
+                    found, close_bowler,perc = find_closest_with_inn(bowler, innings, squad)
+                    if found:
+                        if type == 'bowled':
+                            data[close_bowler][13] += 1
+                        elif type == 'lbw':
+                            data[close_bowler][14] += 1
+                        matched_players.append((bowler, 1, 'algo', perc, close_bowler, ''))
+                    elif clean(bowler) in alt_players:
+                        close_bowler = clean(alt_players[clean(bowler)])
+                        if type == 'bowled':
+                            data[close_bowler][13] += 1
+                        elif type == 'lbw':
+                            data[close_bowler][14] += 1
+                        matched_players.append((bowler, 1, 'list', 1, '', ''))
+                    else:
+                        #print(f'bowler name error: `{bowler}` did not match \nclosest: {close_bowler}')
+                        matched_players.append((bowler, 1, 'no', perc, '', ', '.join(close_bowler)))
+
                 data[id][0] = name
                 data[id][1] = match['season']
                 data[id][2] = match['number']
@@ -149,27 +170,34 @@ def process_players(match, scorecard, squad):
                 data[id][7] = try_catch(int, batsman[6])
                 data[id][8] = try_catch(float, batsman[7])
                 for player in wicket_players:
-                    found, close_player = find_closest_with_inn(player, innings, squad)
+                    found, close_player, perc = find_closest_with_inn(player, innings, squad)
                     if found:
                         id = close_player
                         if type == 'catch':
-                            data[id][17] += 1
+                            data[id][19] += 1
                         elif type == 'run-out':
                             if id == squad[1-innings]['wk']:
-                                data[id][19] += 1
-                            else:
-                                data[id][18] += 1
+                                data[id][20] += 1
+                            elif len(wicket_players) == 1:
+                                data[id][21] += 1
+                            elif len(wicket_players) > 1:
+                                data[id][22] += 1
+                        matched_players.append((player, 0, 'algo', perc, id, ''))
                     elif clean(player) in alt_players:
                         id = clean(alt_players[clean(player)])
                         if type == 'catch':
-                            data[id][17] += 1
+                            data[id][19] += 1
                         elif type == 'run-out':
                             if id == squad[1-innings]['wk']:
-                                data[id][19] += 1
-                            else:
-                                data[id][18] += 1
+                                data[id][20] += 1
+                            elif len(wicket_players) == 1:
+                                data[id][21] += 1
+                            elif len(wicket_players) > 1:
+                                data[id][22] += 1
+                        matched_players.append((player, 0, 'list', 1, id, ''))
                     else:
-                        print(f'player name error: {player} did not match \nclosest: {close_player}')
+                        #print(f'player name error: `{player}` did not match \nclosest: {close_player}')
+                        matched_players.append((player, 0, 'no', perc, '', ', '.join(close_player)))
 
         for bowler in scorecard['bowler'][innings]:
             name = clean(bowler[0])
@@ -179,12 +207,12 @@ def process_players(match, scorecard, squad):
                 data[id][10] = try_catch(int, bowler[2])
                 data[id][11] = try_catch(int, bowler[3])
                 data[id][12] = try_catch(int, bowler[4])
-                data[id][13] = try_catch(float, bowler[5])
-                data[id][14] = try_catch(int, bowler[6])
-                data[id][15] = try_catch(int, bowler[7])
-                data[id][16] = try_catch(int, bowler[8])
+                data[id][15] = try_catch(float, bowler[5])
+                data[id][16] = try_catch(int, bowler[6])
+                data[id][17] = try_catch(int, bowler[7])
+                data[id][18] = try_catch(int, bowler[8])
 
-    return list(data.values())
+    return list(data.values()), matched_players
 
 def ipl_season_csv():
     '''
@@ -193,8 +221,8 @@ def ipl_season_csv():
 
     header = ['player-name', 'season', 'match'] + \
              ['batting-runs', 'balls', 'out', '4s', '6s', 'sr'] + \
-             ['overs', 'maiden', 'bowling-runs', 'wickets', 'econ', '0s', '4s', '6s'] + \
-             ['catches', 'run-out', 'stumping']
+             ['overs', 'maiden', 'bowling-runs', 'wickets', 'bowled', 'lbw', 'econ', '0s', '4s', '6s'] + \
+             ['catches', 'stumping', 'run-out-direct', 'run-out']
 
     data = []
     header_meta = ['season', 'match', 'status', 'toss-team', 'toss-decision', 'venue']
@@ -202,6 +230,7 @@ def ipl_season_csv():
 
     for season in season_url:
         print(f'Season - {season}')
+        player_matches = []
         matches = get_all_match_urls(season)
         for match in matches:
             if 'postponed' in match['status'].lower():
@@ -213,7 +242,9 @@ def ipl_season_csv():
             time.sleep(0.2)
             scorecard, squad = get_espn_scorecard(match['url'])
             metadata.append([match['season'], match['number'], match['status'], *get_toss_info(scorecard['toss']), scorecard['stadium']])
-            data.extend(process_players(match, scorecard, squad))
+            matchdata, p_match = process_players(match, scorecard, squad)
+            data.extend(matchdata)
+            player_matches.extend(p_match)
             print(f'\t Match - {match["number"]} done')
 
     with open('data-match.csv', 'w') as f:
@@ -226,13 +257,19 @@ def ipl_season_csv():
         writer.writerow(header_meta)
         writer.writerows(metadata)
 
+    with open('player-alt-matches.csv', 'w') as f:
+        writer = csv.writer(f)
+        writer.writerow(['name', 'is-currently-bowling', 'matched',
+                        'Percentage match', 'matched-with', 'closest-matches'])
+        writer.writerows(player_matches)
+
 '''
 matches = get_all_match_urls(2021)
 match = matches[-1]
 scorecard,squad = get_espn_scorecard(match['url'])
 data = process_players(match,scorecard,squad)
+
 for row in data:
     print(row)
 '''
-
 ipl_season_csv()
