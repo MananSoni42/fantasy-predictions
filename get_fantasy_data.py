@@ -32,7 +32,7 @@ def get_fantasy_points(row, role):
         points += 4
 
     # fielding
-    catches, stumping, runout_direct, runout = int(row[-4]), int(row[-3]), int(row[-2]), int(row[-1])
+    catches, stumping, runout_direct, runout = int(row[19]), int(row[20]), int(row[21]), int(row[22])
     points += 8*catches + 12*runout_direct + 6*runout + 12*stumping
     if catches >= 3:
         points += 4

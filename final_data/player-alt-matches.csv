@@ -128,7 +128,7 @@ christian,0,algo,1.0,dan-christian,
 zampa,1,algo,1.0,adam-zampa,
 smith,0,algo,1.0,steven-smith,
 patel,1,algo,1.0,axar-patel,
-yadav,0,no,1.0,,"umesh-yadav, kuldeep-yadav"
+yadav,0,no,1.0,,"kuldeep-yadav, umesh-yadav"
 boult,1,algo,1.0,trent-boult,
 narine,0,algo,1.0,sunil-narine,
 rajpoot,1,algo,1.0,ankit-rajpoot,
@@ -225,14 +225,14 @@ kulkarni,0,algo,1.0,dhawal-kulkarni,
 faulkner,1,algo,1.0,james-faulkner,
 smith,0,algo,1.0,dwayne-smith,
 narine,1,algo,1.0,sunil-narine,
-yadav,1,no,1.0,,"umesh-yadav, kuldeep-yadav"
+yadav,1,no,1.0,,"kuldeep-yadav, umesh-yadav"
 uthappa,0,algo,1.0,robin-uthappa,
 woakes,1,algo,1.0,chris-woakes,
 kuldeep-yadav,1,algo,1.0,kuldeep-yadav,
 kuldeep-yadav,1,algo,1.0,kuldeep-yadav,
 woakes,0,algo,1.0,chris-woakes,
 woakes,1,algo,1.0,chris-woakes,
-sharma,1,no,1.0,,"mohit-sharma, sandeep-sharma"
+sharma,1,no,1.0,,"sandeep-sharma, mohit-sharma"
 patel,0,algo,1.0,axar-patel,
 saha,0,algo,1.0,wriddhiman-saha,
 tewatia,1,algo,1.0,rahul-tewatia,
@@ -241,7 +241,7 @@ tewatia,1,algo,1.0,rahul-tewatia,
 patel,0,algo,1.0,axar-patel,
 henry,1,algo,1.0,matt-henry,
 patel,0,algo,1.0,axar-patel,
-sharma,1,no,1.0,,"mohit-sharma, sandeep-sharma"
+sharma,1,no,1.0,,"sandeep-sharma, mohit-sharma"
 maxwell,0,algo,1.0,glenn-maxwell,
 mohammad-nabi,1,algo,1.0,mohammad-nabi,
 kaul,1,algo,1.0,siddarth-kaul,
@@ -257,7 +257,7 @@ kumar,1,algo,1.0,bhuvneshwar-kumar,
 ojha,0,algo,1.0,naman-ojha,
 mcclenaghan,1,algo,1.0,mitchell-mcclenaghan,
 bumrah,1,algo,1.0,jasprit-bumrah,
-rg,0,no,0.3333333333333333,,"nitish-rana, karn-sharma"
+rg,0,no,0.3333333333333333,,"karn-sharma, nitish-rana"
 malinga,1,algo,1.0,lasith-malinga,
 pandya,0,algo,1.0,hardik-pandya,
 sangwan,1,algo,1.0,pradeep-sangwan,
@@ -297,7 +297,7 @@ mishra,0,algo,1.0,amit-mishra,
 mcclenaghan,1,algo,1.0,mitchell-mcclenaghan,
 simmons,0,algo,1.0,lendl-simmons,
 harbhajan-singh,1,algo,1.0,harbhajan-singh,
-rg,0,no,0.3333333333333333,,"nitish-rana, karn-sharma"
+rg,0,no,0.3333333333333333,,"karn-sharma, nitish-rana"
 malinga,1,algo,1.0,lasith-malinga,
 harbhajan,0,algo,1.0,harbhajan-singh,
 bumrah,1,algo,1.0,jasprit-bumrah,
@@ -305,11 +305,11 @@ simmons,0,algo,1.0,lendl-simmons,
 malinga,1,algo,1.0,lasith-malinga,
 kv,0,no,0.3333333333333333,,karn-sharma
 kv-sharma,1,algo,0.6666666666666666,karn-sharma,
-rg,0,no,0.3333333333333333,,"nitish-rana, karn-sharma"
+rg,0,no,0.3333333333333333,,"karn-sharma, nitish-rana"
 harbhajan-singh,1,algo,1.0,harbhajan-singh,
 patel,0,algo,1.0,parthiv-patel,
 kv-sharma,1,algo,0.6666666666666666,karn-sharma,
-rg,0,no,0.3333333333333333,,"nitish-rana, karn-sharma"
+rg,0,no,0.3333333333333333,,"karn-sharma, nitish-rana"
 harbhajan-singh,1,algo,1.0,harbhajan-singh,
 pollard,0,algo,1.0,kieron-pollard,
 kv-sharma,1,algo,0.6666666666666666,karn-sharma,
@@ -363,7 +363,7 @@ guptill,0,algo,1.0,martin-guptill,
 sandeep-sharma,1,algo,1.0,sandeep-sharma,
 sandeep-sharma,1,algo,1.0,sandeep-sharma,
 saha,0,algo,1.0,wriddhiman-saha,
-sharma,1,no,1.0,,"mohit-sharma, sandeep-sharma"
+sharma,1,no,1.0,,"sandeep-sharma, mohit-sharma"
 patel,0,algo,1.0,axar-patel,
 patel,1,algo,1.0,axar-patel,
 saha,0,algo,1.0,wriddhiman-saha,
@@ -371,7 +371,7 @@ patel,1,algo,1.0,axar-patel,
 saha,0,algo,1.0,wriddhiman-saha,
 maxwell,1,algo,1.0,glenn-maxwell,
 patel,1,algo,1.0,axar-patel,
-sharma,1,no,1.0,,"mohit-sharma, sandeep-sharma"
+sharma,1,no,1.0,,"sandeep-sharma, mohit-sharma"
 guptill,0,algo,1.0,martin-guptill,
 nadeem,0,algo,1.0,shahbaz-nadeem,
 rabada,1,algo,1.0,kagiso-rabada,
@@ -452,7 +452,7 @@ basil-thampi,1,algo,1.0,basil-thampi,
 basil-thampi,1,algo,1.0,basil-thampi,
 mccullum,0,algo,1.0,brendon-mccullum,
 mcclenaghan,1,algo,1.0,mitchell-mcclenaghan,
-rg,0,no,0.3333333333333333,,"nitish-rana, karn-sharma"
+rg,0,no,0.3333333333333333,,"karn-sharma, nitish-rana"
 kv-sharma,1,algo,0.6666666666666666,karn-sharma,
 hh,0,list,1,hardik-pandya,
 kh-pandya,1,list,1,,
@@ -494,23 +494,6 @@ kumar,1,algo,1.0,bhuvneshwar-kumar,
 rashid,0,algo,1.0,rashid-khan,
 kaul,1,algo,1.0,siddarth-kaul,
 rashid,0,algo,1.0,rashid-khan,
-sandeep-sharma,1,algo,1.0,sandeep-sharma,
-sharma,0,no,1.0,,"mohit-sharma, sandeep-sharma"
-sandeep-sharma,1,algo,1.0,sandeep-sharma,
-saha,0,algo,1.0,wriddhiman-saha,
-patel,1,algo,1.0,axar-patel,
-sandeep-sharma,1,algo,1.0,sandeep-sharma,
-sandeep,0,algo,1.0,sandeep-sharma,
-maxwell,1,algo,1.0,glenn-maxwell,
-aaron,1,algo,1.0,varun-aaron,
-patel,1,algo,1.0,axar-patel,
-patel,0,algo,1.0,axar-patel,
-sandeep-sharma,1,algo,1.0,sandeep-sharma,
-marsh,0,algo,1.0,shaun-marsh,
-aaron,1,algo,1.0,varun-aaron,
-sandeep,0,algo,1.0,sandeep-sharma,
-sharma,1,no,1.0,,"mohit-sharma, sandeep-sharma"
-sharma,0,no,1.0,,"mohit-sharma, sandeep-sharma"
 harbhajan-singh,1,algo,1.0,harbhajan-singh,
 pollard,0,algo,1.0,kieron-pollard,
 malinga,1,algo,1.0,lasith-malinga,
@@ -582,7 +565,7 @@ nehra,1,algo,1.0,ashish-nehra,
 williamson,0,algo,1.0,kane-williamson,
 nehra,1,algo,1.0,ashish-nehra,
 hooda,0,algo,1.0,deepak-hooda,
-yadav,1,no,1.0,,"umesh-yadav, kuldeep-yadav"
+yadav,1,no,1.0,,"kuldeep-yadav, umesh-yadav"
 narine,1,algo,1.0,sunil-narine,
 coulter-nile,1,algo,1.0,nathan-coulter-nile,
 coulter-nile,1,algo,1.0,nathan-coulter-nile,
@@ -620,7 +603,7 @@ narine,1,algo,1.0,sunil-narine,
 chawla,1,algo,1.0,piyush-chawla,
 kuldeep-yadav,1,algo,1.0,kuldeep-yadav,
 kuldeep-yadav,1,algo,1.0,kuldeep-yadav,
-yadav,1,no,1.0,,"umesh-yadav, kuldeep-yadav"
+yadav,1,no,1.0,,"kuldeep-yadav, umesh-yadav"
 pandey,0,algo,1.0,manish-pandey,
 thakur,0,algo,1.0,shardul-thakur,
 dhoni,0,algo,1.0,ms-dhoni,
@@ -698,7 +681,7 @@ smith,1,algo,1.0,dwayne-smith,
 finch,0,algo,1.0,aaron-finch,
 basil-thampi,0,algo,1.0,basil-thampi,
 sandeep-sharma,1,algo,1.0,sandeep-sharma,
-sharma,1,no,1.0,,"mohit-sharma, sandeep-sharma"
+sharma,1,no,1.0,,"sandeep-sharma, mohit-sharma"
 stoinis,0,algo,1.0,marcus-stoinis,
 patel,1,algo,1.0,axar-patel,
 maxwell,0,algo,1.0,glenn-maxwell,
@@ -893,12 +876,12 @@ patel,1,algo,1.0,axar-patel,
 miller,0,algo,1.0,david-miller,
 aaron,1,algo,1.0,varun-aaron,
 saha,0,algo,1.0,wriddhiman-saha,
-sharma,1,no,1.0,,"mohit-sharma, sandeep-sharma"
+sharma,1,no,1.0,,"sandeep-sharma, mohit-sharma"
 morgan,0,algo,1.0,eoin-morgan,
 aaron,1,algo,1.0,varun-aaron,
 morgan,0,algo,1.0,eoin-morgan,
 sandeep-sharma,1,algo,1.0,sandeep-sharma,
-sharma,0,no,1.0,,"mohit-sharma, sandeep-sharma"
+sharma,0,no,1.0,,"sandeep-sharma, mohit-sharma"
 nadeem,1,algo,1.0,shahbaz-nadeem,
 morris,1,algo,1.0,chris-morris,
 billings,0,algo,1.0,sam-billings,

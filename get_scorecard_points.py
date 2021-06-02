@@ -125,7 +125,7 @@ def process_players(match, scorecard, squad):
     Each player has a unique player id (stored in data-players.json)
     Returns a 2-d array
     '''
-    data_row = [0]*23
+    data_row = [0]*25
     data = dict()
     matched_players = []
 
@@ -133,6 +133,10 @@ def process_players(match, scorecard, squad):
         for player in squad[innings]['players']:
             data[player] = data_row.copy()
             data[player][0] = player
+            data[player][1] = match['season']
+            data[player][2] = match['number']
+            data[player][-1] = innings
+            data[player][-2] = clean(scorecard['stadium'])
 
     for innings in [0,1]:
         for batsman in scorecard['batsman'][innings]:
@@ -203,6 +207,8 @@ def process_players(match, scorecard, squad):
             name = clean(bowler[0])
             if name:
                 id = name
+                data[id][1] = match['season']
+                data[id][2] = match['number']
                 data[id][9] = try_catch(float, bowler[1])
                 data[id][10] = try_catch(int, bowler[2])
                 data[id][11] = try_catch(int, bowler[3])
@@ -222,7 +228,8 @@ def ipl_season_csv():
     header = ['player-name', 'season', 'match'] + \
              ['batting-runs', 'balls', 'out', '4s', '6s', 'sr'] + \
              ['overs', 'maiden', 'bowling-runs', 'wickets', 'bowled', 'lbw', 'econ', '0s', '4s', '6s'] + \
-             ['catches', 'stumping', 'run-out-direct', 'run-out']
+             ['catches', 'stumping', 'run-out-direct', 'run-out'] +\
+             ['stadium', 'innings']
 
     data = []
     header_meta = ['season', 'match', 'status', 'toss-team', 'toss-decision', 'venue']
@@ -247,15 +254,15 @@ def ipl_season_csv():
             player_matches.extend(p_match)
             print(f'\t Match - {match["number"]} done')
 
-    with open('data-match.csv', 'w') as f:
-        writer = csv.writer(f)
-        writer.writerow(header)
-        writer.writerows(data)
+        with open('data-match.csv', 'w') as f:
+            writer = csv.writer(f)
+            writer.writerow(header)
+            writer.writerows(data)
 
-    with open('data-meta.csv', 'w') as f:
-        writer = csv.writer(f)
-        writer.writerow(header_meta)
-        writer.writerows(metadata)
+        with open('data-meta.csv', 'w') as f:
+            writer = csv.writer(f)
+            writer.writerow(header_meta)
+            writer.writerows(metadata)
 
     with open('player-alt-matches.csv', 'w') as f:
         writer = csv.writer(f)
@@ -267,9 +274,10 @@ def ipl_season_csv():
 matches = get_all_match_urls(2021)
 match = matches[-1]
 scorecard,squad = get_espn_scorecard(match['url'])
-data = process_players(match,scorecard,squad)
+data, _ = process_players(match,scorecard,squad)
 
 for row in data:
     print(row)
 '''
+
 ipl_season_csv()
