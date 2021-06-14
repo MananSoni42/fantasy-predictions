@@ -5,24 +5,43 @@ import seaborn as sns
 from sklearn.linear_model import LinearRegression
 from pprint import pprint
 import statistics
+import os
+dir = 'plots'
+if not os.path.exists(dir):
+    os.mkdir(dir)
+clean = lambda x: x.replace(' ','').replace('\n','')
+
+#importing file and convrting it to PD dataframe
 other_path = "data-ipl-fantasy.csv"
 df = pd.read_csv(other_path, header=None)
 new_header = df.iloc[0]
 df = df[1:]
 df.columns = new_header
+
+#importing all time records nd converting it to dataframe
+
+other_path = "final-data.csv"
+df1 = pd.read_csv(other_path, header=None)
+new_header1 = df1.iloc[0]
+df1 = df1[1:]
+df1.columns = new_header1
+
+#list to store player-names for data analysis
+
 convert_dict = { 'points':float,'batting-runs':float,'wickets':float,'sr':float,'econ':float}
 df=df.astype(convert_dict)
-#print(df.head(5))
-clean = lambda x: x.replace(' ','').replace('\n','')
 names=[]
 names = set(df['player-name'])
-names = set(list(names)[:5])
+names = set(list(names)[:25])
+
+#some variable initialization for future use
 
 player_form = dict()
 n = len(names)
 lolmax=list()
 count=list()
 j=0
+
 for i,name in enumerate(names):
     #print(f'{i+1}/{n}')
     hehe=[]
@@ -54,7 +73,32 @@ lolmax=pd.DataFrame(lolmax)
 lolmax.columns=["Player-name","Average Points","Average Batting-Runs","Average wicket per match","Average sr","Average bowl econ","Matches played"]
 print(lolmax)
 
+print(lolmax.corr())
+stats_df=lolmax.describe()
+stats_df.loc['range'] = stats_df.loc['max'] - stats_df.loc['min']
+#stats_df
+out_fields = ['mean','25%','50%','75%', 'range']
+stats_df = stats_df.loc[out_fields]
+#stats_df
+stats_df.rename({'50%': 'median'}, inplace=True)
+print(stats_df)
 
+ax = lolmax.plot.hist(bins=25, alpha=0.5)
+ax.set_xlabel('Size (cm)');
+plt.savefig(os.path.join(dir,f'tp.png'))
+
+lolu=lolmax.groupby('Matches played').mean()
+print(lolu)
+
+#sns.set_context('talk')
+#sns.pairplot(lolmax, hue='Matches played');
+#plt.savefig(os.path.join(dir,f'tps.png'))
+
+sns.regplot(x="Average Points", y="Matches played", data=lolmax)
+plt.savefig(os.path.join(dir,f'tpss.png'))
+
+sns.regplot(x="Average Points", y="Average Batting-Runs", data=lolmax)
+plt.savefig(os.path.join(dir,f'tpsss.png'))
 '''
 player_form = player_form.astype(float)
 print(player_form.dtypes)
