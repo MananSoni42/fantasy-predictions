@@ -38,52 +38,50 @@ names = set(list(names)[:25])
 
 player_form = dict()
 n = len(names)
-lolmax=list()
-count=list()
+gen_stats=list()
+match_count=list()
 j=0
 
 for i,name in enumerate(names):
     #print(f'{i+1}/{n}')
-    hehe=[]
-    hehe1=[]
-    hehe2=[]
-    hehe3=[]
-    hehe4=[]
-    c=0
-    cc=0
+    point=[]
+    bat_run=[]
+    wick=[]
+    bat_strike_rate=[]
+    bowl_econ=[]
+    non_zero_balls_played=0
+    zero_balls_played=0
     for i in range(1,df.shape[0]+1):
         if(df.loc[i].at["player-name"]==name):
             #hehe0.append(df.loc[i].at["player-name"])
             if(df.loc[i].at["balls"]==0):
-                cc=cc+1
+                zero_balls_played=zero_balls_played+1
             #print(df.loc[i].at["balls"])
-            hehe.append(df.loc[i].at["points"])
-            hehe1.append(df.loc[i].at["batting-runs"])
-            hehe2.append(df.loc[i].at["wickets"])
-            hehe3.append(df.loc[i].at["sr"])
-            hehe4.append(df.loc[i].at["econ"])  
-            c=c+1
+            point.append(df.loc[i].at["points"])
+            bat_run.append(df.loc[i].at["batting-runs"])
+            wick.append(df.loc[i].at["wickets"])
+            bat_strike_rate.append(df.loc[i].at["sr"])
+            bowl_econ.append(df.loc[i].at["econ"])  
+            non_zero_balls_played=non_zero_balls_played+1
     total=0
-    print(c)
-    print(cc)
-    for ele in range(0, len(hehe3)):
-        total = total + hehe3[ele]
-    av1=statistics.mean(hehe)
-    av2=statistics.mean(hehe1)
-    av3=statistics.mean(hehe2)
-    av4=total/(c-cc)
-    av5=statistics.mean(hehe4)
-    count.append(c)
-    lolmax.append([name,av1,av2,av3,av4,av5,count[j]])  
+    for ele in range(0, len(bat_strike_rate)):
+        total = total + bat_strike_rate[ele]
+    av1=statistics.mean(point)
+    av2=statistics.mean(bat_run)
+    av3=statistics.mean(wick)
+    av4=total/(non_zero_balls_played-zero_balls_played)
+    av5=statistics.mean(bowl_econ)
+    match_count.append(non_zero_balls_played)
+    gen_stats.append([name,av1,av2,av3,av4,av5,match_count[j]])  
     j=j+1
 #print(player_form[axar-patel].groupby('batting').median())
-lolmax=pd.DataFrame(lolmax)
-lolmax.columns=["Player-name","Average Points","Average Batting-Runs","Average wicket per match","Average sr","Average bowl econ","Matches played"]
-lolmax['Average sr'] = lolmax['Average sr'].fillna(0)
-print(lolmax)
+gen_stats=pd.DataFrame(gen_stats)
+gen_stats.columns=["Player-name","Average Points","Average Batting-Runs","Average wicket per match","Average sr","Average bowl econ","Matches played"]
+gen_stats['Average sr'] = gen_stats['Average sr'].fillna(0)
+print(gen_stats)
 
-print(lolmax.corr())
-stats_df=lolmax.describe()
+print(gen_stats.corr())
+stats_df=gen_stats.describe()
 stats_df.loc['range'] = stats_df.loc['max'] - stats_df.loc['min']
 #stats_df
 out_fields = ['mean','25%','50%','75%', 'range']
@@ -92,21 +90,21 @@ stats_df = stats_df.loc[out_fields]
 stats_df.rename({'50%': 'median'}, inplace=True)
 print(stats_df)
 
-ax = lolmax.plot.hist(bins=25, alpha=0.5)
+ax = gen_stats.plot.hist(bins=25, alpha=0.5)
 ax.set_xlabel('Size (cm)');
 plt.savefig(os.path.join(dir,f'tp.png'))
 
-lolu=lolmax.groupby('Matches played').mean()
-print(lolu)
+gen_stats_grouping=gen_stats.groupby('Matches played').mean()
+print(gen_stats_grouping)
 
 #sns.set_context('talk')
 #sns.pairplot(lolmax, hue='Matches played');
 #plt.savefig(os.path.join(dir,f'tps.png'))
 
-sns.regplot(x="Average Points", y="Matches played", data=lolmax)
+sns.regplot(x="Average Points", y="Matches played", data=gen_stats)
 plt.savefig(os.path.join(dir,f'tpss.png'))
 
-sns.regplot(x="Average Points", y="Matches played", data=lolmax)
+sns.regplot(x="Average Points", y="Matches played", data=gen_stats)
 plt.savefig(os.path.join(dir,f'tpsss.png'))
 '''
 player_form = player_form.astype(float)
