@@ -25,7 +25,10 @@ df1 = pd.read_csv(other_path, header=None)
 new_header1 = df1.iloc[0]
 df1 = df1[1:]
 df1.columns = new_header1
-
+df2 = df1.iloc[: , [0,13,14,15,16,17,18,19,20,21,22,23,24]].copy()
+print(df2)
+df1 = df1.iloc[:,:13]
+print(df1)
 #list to store player-names for data analysis
 
 convert_dict = { 'points':float,'batting-runs':float,'wickets':float,'sr':float,'econ':float,'balls':int}
@@ -34,6 +37,11 @@ names=[]
 names = set(df['player-name'])
 names = set(list(names)[:25])
 
+
+convert_dict_all_time = { 'all-time-runs-scored' : float, 'all-time-average' : float, 'all-time-strike-rate' : float, 'all-time-100s' : float, 'all-time-50s' : float, 'all-time-4s' : float, 'all-time-6s' : float, 'all-time-wkts' : float, 'all-time-ave' : float, 'all-time-econ' : float, 'all-time-sr' : float,'all-time-catches' : float}
+df1=df1.astype(convert_dict_all_time)
+names_at = set(df1['player-name'])
+names_at = set(list(names)[:25])
 #some variable initialization for future use
 
 player_form = dict()
@@ -81,6 +89,8 @@ gen_stats['Average sr'] = gen_stats['Average sr'].fillna(0)
 print(gen_stats)
 
 print(gen_stats.corr())
+print(df1.corr())
+print(df2.corr())
 stats_df=gen_stats.describe()
 stats_df.loc['range'] = stats_df.loc['max'] - stats_df.loc['min']
 #stats_df
