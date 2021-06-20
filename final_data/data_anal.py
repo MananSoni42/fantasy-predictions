@@ -35,7 +35,7 @@ convert_dict = { 'points':float,'batting-runs':float,'wickets':float,'sr':float,
 df=df.astype(convert_dict)
 names=[]
 names = set(df['player-name'])
-names = set(list(names)[:25])
+names = set(list(names)[:150])
 
 
 convert_dict_all_time = { 'all-time-runs-scored' : float, 'all-time-average' : float, 'all-time-strike-rate' : float, 'all-time-100s' : float, 'all-time-50s' : float, 'all-time-4s' : float, 'all-time-6s' : float, 'all-time-wkts' : float, 'all-time-ave' : float, 'all-time-econ' : float, 'all-time-sr' : float,'all-time-catches' : float}
@@ -88,9 +88,13 @@ gen_stats.columns=["Player-name","Average Points","Average Batting-Runs","Averag
 gen_stats['Average sr'] = gen_stats['Average sr'].fillna(0)
 print(gen_stats)
 
-print(gen_stats.corr())
+corr = gen_stats.corr()# plot the heatmap
+sns.heatmap(corr, xticklabels=corr.columns, yticklabels=corr.columns, annot=True, cmap=sns.diverging_palette(220, 20, as_cmap=True))
+plt.savefig(os.path.join(dir,f'heatmap.png'))
+
 print(df1.corr())
 print(df2.corr())
+
 stats_df=gen_stats.describe()
 stats_df.loc['range'] = stats_df.loc['max'] - stats_df.loc['min']
 #stats_df
@@ -116,6 +120,12 @@ plt.savefig(os.path.join(dir,f'tpss.png'))
 
 sns.regplot(x="Average Points", y="Matches played", data=gen_stats)
 plt.savefig(os.path.join(dir,f'tpsss.png'))
+
+gen_stats.plot(kind='scatter', x='Average Points', y='Average Batting-Runs')
+plt.savefig(os.path.join(dir,f'scatter.png'))
+
+sns.pairplot(gen_stats)
+plt.savefig(os.path.join(dir,f'pairplot.png'))
 '''
 player_form = player_form.astype(float)
 print(player_form.dtypes)
