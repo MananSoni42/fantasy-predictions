@@ -5,6 +5,8 @@ import seaborn as sns
 from sklearn.linear_model import LinearRegression
 from pprint import pprint
 import statistics
+import openpyxl
+import xlsxwriter
 import os
 dir = 'plots'
 if not os.path.exists(dir):
@@ -25,17 +27,21 @@ df1 = pd.read_csv(other_path, header=None)
 new_header1 = df1.iloc[0]
 df1 = df1[1:]
 df1.columns = new_header1
+# copy the data
+df_max_scaled = df1.copy()
+df_min_max_scaled = df1.copy()
+df_z_scaled = df1.copy()
 df2 = df1.iloc[: , [0,13,14,15,16,17,18,19,20,21,22,23,24]].copy()
-print(df2)
+#print(df2)
 df1 = df1.iloc[:,:13]
-print(df1)
+#print(df1)
 #list to store player-names for data analysis
 
 convert_dict = { 'points':float,'batting-runs':float,'wickets':float,'sr':float,'econ':float,'balls':int}
 df=df.astype(convert_dict)
 names=[]
 names = set(df['player-name'])
-names = set(list(names)[:150])
+names = set(list(names)[:172])
 
 
 convert_dict_all_time = { 'all-time-runs-scored' : float, 'all-time-average' : float, 'all-time-strike-rate' : float, 'all-time-100s' : float, 'all-time-50s' : float, 'all-time-4s' : float, 'all-time-6s' : float, 'all-time-wkts' : float, 'all-time-ave' : float, 'all-time-econ' : float, 'all-time-sr' : float,'all-time-catches' : float}
@@ -88,6 +94,8 @@ gen_stats.columns=["Player-name","Average Points","Average Batting-Runs","Averag
 gen_stats['Average sr'] = gen_stats['Average sr'].fillna(0)
 print(gen_stats)
 
+ave_stats=gen_stats.copy()
+
 corr = gen_stats.corr()# plot the heatmap
 sns.heatmap(corr, xticklabels=corr.columns, yticklabels=corr.columns, annot=True, cmap=sns.diverging_palette(220, 20, as_cmap=True))
 plt.savefig(os.path.join(dir,f'heatmap.png'))
@@ -126,6 +134,61 @@ plt.savefig(os.path.join(dir,f'scatter.png'))
 
 sns.pairplot(gen_stats)
 plt.savefig(os.path.join(dir,f'pairplot.png'))
+
+
+
+df_max_scaled.drop(columns=['player-name'],inplace=True)
+df_max_scaled = df_max_scaled.apply(pd.to_numeric)  
+# apply normalization techniques
+for column in df_max_scaled.columns:
+    df_max_scaled[column] = df_max_scaled[column]  / df_max_scaled[column].abs().max()
+      
+# view normalized data
+print(df_max_scaled)
+
+df_min_max_scaled.drop(columns=['player-name'],inplace=True)
+df_min_max_scaled = df_min_max_scaled.apply(pd.to_numeric)
+for column in df_min_max_scaled.columns:
+    df_min_max_scaled[column] = (df_min_max_scaled[column] - df_min_max_scaled[column].min()) / (df_min_max_scaled[column].max() - df_min_max_scaled[column].min())
+print(df_min_max_scaled)
+
+  
+# apply normalization techniques
+df_z_scaled.drop(columns=['player-name'],inplace=True)
+df_z_scaled = df_z_scaled.apply(pd.to_numeric)
+for column in df_z_scaled.columns:
+    df_z_scaled[column] = (df_z_scaled[column] -
+                           df_z_scaled[column].mean()) / df_z_scaled[column].std()    
+  
+# view normalized data   
+print(df_z_scaled)
+
+names=df1['player-name']
+df_max_scaled.insert(0,'player-name',names)
+df_min_max_scaled.insert(0,'player-name',names)
+df_z_scaled.insert(0,'player-name',names)
+
+df_max_scaled.to_excel("mean_scaling.xlsx",sheet_name='mean_scaling')
+df_min_max_scaled.to_excel("min_max_scaling.xlsx",sheet_name='min_max_scaling') 
+df_z_scaled.to_excel("z_scaling.xlsx",sheet_name='z_scaling') 
+
+#for gen_stats dataframe
+names2=ave_stats['Player-name']
+ave_stats.drop(columns=['Player-name'],inplace=True)
+ave_stats = ave_stats.apply(pd.to_numeric)
+ave_stats_z=ave_stats.copy()
+
+for column in ave_stats.columns:
+    ave_stats[column] = (ave_stats[column] - ave_stats[column].min()) / (ave_stats[column].max() - ave_stats[column].min())
+
+for column in ave_stats_z.columns:
+    ave_stats_z[column] = (ave_stats_z[column] -
+                           ave_stats_z[column].mean()) / ave_stats_z[column].std()
+ave_stats.insert(0,"Player-name",names2)
+ave_stats_z.insert(0,"Player-name",names2)
+
+ave_stats.to_excel("ave_stats_min_max_scaling.xlsx",sheet_name='min_max_scaling')
+ave_stats_z.to_excel("ave_stats_z_scaling.xlsx",sheet_name='z_scaling')
 '''
 player_form = player_form.astype(float)
 print(player_form.dtypes)
