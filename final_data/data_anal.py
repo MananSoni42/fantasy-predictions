@@ -3,6 +3,8 @@ from pandas import DataFrame
 import matplotlib.pyplot as plt
 import seaborn as sns
 from sklearn.linear_model import LinearRegression
+from sklearn.model_selection import train_test_split
+from pathlib import Path
 from pprint import pprint
 import statistics
 import openpyxl
@@ -12,6 +14,7 @@ dir = 'plots'
 if not os.path.exists(dir):
     os.mkdir(dir)
 clean = lambda x: x.replace(' ','').replace('\n','')
+data_dir = Path('..')
 
 #importing file and convrting it to PD dataframe
 other_path = "data-ipl-fantasy.csv"
@@ -41,7 +44,7 @@ convert_dict = { 'points':float,'batting-runs':float,'wickets':float,'sr':float,
 df=df.astype(convert_dict)
 names=[]
 names = set(df['player-name'])
-names = set(list(names)[:172])
+names = set(list(names)[:25])
 
 
 convert_dict_all_time = { 'all-time-runs-scored' : float, 'all-time-average' : float, 'all-time-strike-rate' : float, 'all-time-100s' : float, 'all-time-50s' : float, 'all-time-4s' : float, 'all-time-6s' : float, 'all-time-wkts' : float, 'all-time-ave' : float, 'all-time-econ' : float, 'all-time-sr' : float,'all-time-catches' : float}
@@ -189,6 +192,62 @@ ave_stats_z.insert(0,"Player-name",names2)
 
 ave_stats.to_excel("ave_stats_min_max_scaling.xlsx",sheet_name='min_max_scaling')
 ave_stats_z.to_excel("ave_stats_z_scaling.xlsx",sheet_name='z_scaling')
+
+#storing normalized data to dataframes and then splitting to test_train
+ave_stats_mm = pd.read_excel('ave_stats_min_max_scaling.xlsx')
+ave_stats_z = pd.read_excel('ave_stats_z_scaling.xlsx')
+overall_ms=pd.read_excel('mean_scaling.xlsx')
+overall_mm=pd.read_excel('min_max_scaling.xlsx')
+overall_z=pd.read_excel('z_scaling.xlsx')
+
+#splitting into train test_train
+train_ave_mm, test_ave_mm = train_test_split(ave_stats_mm, test_size=0.2, random_state=42, shuffle=True)
+train_ave_z, test_ave_z = train_test_split(ave_stats_z, test_size=0.2, random_state=42, shuffle=True)
+train_overall_ms, test_overall_ms = train_test_split(overall_ms, test_size=0.2, random_state=42, shuffle=True)
+train_overall_mm, test_overall_mm = train_test_split(overall_mm, test_size=0.2, random_state=42, shuffle=True)
+train_overall_z, test_overall_z = train_test_split(overall_z, test_size=0.2, random_state=42, shuffle=True)
+
+# determine the path where to save the train and test file
+train_path = Path(data_dir, 'train_ave_mm.csv')
+test_path = Path(data_dir, 'test_ave_mm.csv')
+
+# save the train and test file
+# again using the '\t' separator to create tab-separated-values files
+train_ave_mm.to_csv(train_path, sep=',', index=False)
+test_ave_mm.to_csv(test_path, sep=',', index=False)
+
+train_path = Path(data_dir, 'train_ave_z.csv')
+test_path = Path(data_dir, 'test_ave_z.csv')
+
+# save the train and test file
+# again using the '\t' separator to create tab-separated-values files
+train_ave_z.to_csv(train_path, sep=',', index=False)
+test_ave_z.to_csv(test_path, sep=',', index=False)
+
+train_path = Path(data_dir, 'train_overall_ms.csv')
+test_path = Path(data_dir, 'test_overall_ms.csv')
+
+# save the train and test file
+# again using the '\t' separator to create tab-separated-values files
+train_overall_ms.to_csv(train_path, sep=',', index=False)
+test_overall_ms.to_csv(test_path, sep=',', index=False)
+
+train_path = Path(data_dir, 'train_overall_mm.csv')
+test_path = Path(data_dir, 'test_overall_mm.csv')
+
+# save the train and test file
+# again using the '\t' separator to create tab-separated-values files
+train_overall_mm.to_csv(train_path, sep=',', index=False)
+test_overall_mm.to_csv(test_path, sep=',', index=False)
+
+train_path = Path(data_dir, 'train_overall_z.csv')
+test_path = Path(data_dir, 'test_overall_z.csv')
+
+# save the train and test file
+# again using the '\t' separator to create tab-separated-values files
+train_overall_z.to_csv(train_path, sep=',', index=False)
+test_overall_z.to_csv(test_path, sep=',', index=False)
+
 '''
 player_form = player_form.astype(float)
 print(player_form.dtypes)
