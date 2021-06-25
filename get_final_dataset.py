@@ -93,13 +93,15 @@ def get_ipl(player, season, match, num_innings):
 
     data = np.zeros(12)
     for i in [0,3,4,5,9,10,11]:
+        #data[i] = np.sum([1/np.power(2,i) for i in reversed(range(num_innings))]*tmp_data[:,i])
         data[i] = np.sum(tmp_data[:,i])
 
     overs2balls = lambda x: -1 if np.isnan(x) else 6*int(x) + (10*x)%10
     nan = lambda x: -1 if np.isnan(x) or np.isinf(x) else x
 
 
-    data[1] = nan(np.sum(tmp_data[:,0]) / (np.sum(tmp_data[:,1]))) # batting average
+    #data[1] = nan( np.sum([1/np.power(2,i) for i in reversed(range(num_innings))] * tmp_data[:,0]) / (np.sum(tmp_data[:,1])) ) # batting average
+    data[1] = nan( np.sum(tmp_data[:,0]) / (np.sum(tmp_data[:,1])) ) # batting average
     data[2] = nan(100*np.sum(tmp_data[:,0]) / (np.sum(tmp_data[:,2]))) # batting SR
     data[6] = nan(np.sum(tmp_data[:,6]) / (np.sum(tmp_data[:,5]))) # bowling average
     data[7] = nan(np.sum(tmp_data[:,6]) / (np.sum(tmp_data[:,7]))) # bowling economy
@@ -136,7 +138,7 @@ base = [
 
 header = ['player-name']
 header += prefix('all-time',base[:-2])
-header += prefix(f'ipl-last-5',base[:3]+base[5:])
+header += prefix(f'ipl-last-n',base[:3]+base[5:])
 for i in range(1,5+1):
     header += prefix(f'ipl-{i}',base[:3]+base[5:])
 header += ['points']

@@ -8,7 +8,7 @@ dir = 'plots'
 if not os.path.exists(dir):
     os.mkdir(dir)
 
-df = pd.read_csv('final_data/final-data-exp.csv', index_col='player-name')
+df = pd.read_csv('final_data/final-data.csv', index_col='player-name')
 df =df.replace(-1,np.nan)
 
 # describe
