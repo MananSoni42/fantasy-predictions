@@ -7,8 +7,8 @@ from sklearn.model_selection import train_test_split
 from pathlib import Path
 from pprint import pprint
 import statistics
-import openpyxl
-import xlsxwriter
+#import openpyxl
+#import xlsxwriter
 import os
 dir = 'plots'
 if not os.path.exists(dir):
@@ -44,13 +44,13 @@ convert_dict = { 'points':float,'batting-runs':float,'wickets':float,'sr':float,
 df=df.astype(convert_dict)
 names=[]
 names = set(df['player-name'])
-names = set(list(names)[:25])
+names = set(list(names))
 
 
 convert_dict_all_time = { 'all-time-runs-scored' : float, 'all-time-average' : float, 'all-time-strike-rate' : float, 'all-time-100s' : float, 'all-time-50s' : float, 'all-time-4s' : float, 'all-time-6s' : float, 'all-time-wkts' : float, 'all-time-ave' : float, 'all-time-econ' : float, 'all-time-sr' : float,'all-time-catches' : float}
 df1=df1.astype(convert_dict_all_time)
 names_at = set(df1['player-name'])
-names_at = set(list(names)[:25])
+names_at = set(list(names))
 #some variable initialization for future use
 
 player_form = dict()
@@ -60,7 +60,7 @@ match_count=list()
 j=0
 
 for i,name in enumerate(names):
-    #print(f'{i+1}/{n}')
+    print(f'{i+1}/{n}')
     point=[]
     bat_run=[]
     wick=[]
@@ -78,7 +78,7 @@ for i,name in enumerate(names):
             bat_run.append(df.loc[i].at["batting-runs"])
             wick.append(df.loc[i].at["wickets"])
             bat_strike_rate.append(df.loc[i].at["sr"])
-            bowl_econ.append(df.loc[i].at["econ"])  
+            bowl_econ.append(df.loc[i].at["econ"])
             non_zero_balls_played=non_zero_balls_played+1
     total=0
     for ele in range(0, len(bat_strike_rate)):
@@ -89,7 +89,7 @@ for i,name in enumerate(names):
     av4=total/(non_zero_balls_played-zero_balls_played)
     av5=statistics.mean(bowl_econ)
     match_count.append(non_zero_balls_played)
-    gen_stats.append([name,av1,av2,av3,av4,av5,match_count[j]])  
+    gen_stats.append([name,av1,av2,av3,av4,av5,match_count[j]])
     j=j+1
 #print(player_form[axar-patel].groupby('batting').median())
 gen_stats=pd.DataFrame(gen_stats)
@@ -138,14 +138,15 @@ plt.savefig(os.path.join(dir,f'scatter.png'))
 sns.pairplot(gen_stats)
 plt.savefig(os.path.join(dir,f'pairplot.png'))
 
+gen_stats.to_csv('ave_stats.csv')
 
-
+'''
 df_max_scaled.drop(columns=['player-name'],inplace=True)
-df_max_scaled = df_max_scaled.apply(pd.to_numeric)  
+df_max_scaled = df_max_scaled.apply(pd.to_numeric)
 # apply normalization techniques
 for column in df_max_scaled.columns:
     df_max_scaled[column] = df_max_scaled[column]  / df_max_scaled[column].abs().max()
-      
+
 # view normalized data
 print(df_max_scaled)
 
@@ -155,15 +156,15 @@ for column in df_min_max_scaled.columns:
     df_min_max_scaled[column] = (df_min_max_scaled[column] - df_min_max_scaled[column].min()) / (df_min_max_scaled[column].max() - df_min_max_scaled[column].min())
 print(df_min_max_scaled)
 
-  
+
 # apply normalization techniques
 df_z_scaled.drop(columns=['player-name'],inplace=True)
 df_z_scaled = df_z_scaled.apply(pd.to_numeric)
 for column in df_z_scaled.columns:
     df_z_scaled[column] = (df_z_scaled[column] -
-                           df_z_scaled[column].mean()) / df_z_scaled[column].std()    
-  
-# view normalized data   
+                           df_z_scaled[column].mean()) / df_z_scaled[column].std()
+
+# view normalized data
 print(df_z_scaled)
 
 names=df1['player-name']
@@ -171,9 +172,9 @@ df_max_scaled.insert(0,'player-name',names)
 df_min_max_scaled.insert(0,'player-name',names)
 df_z_scaled.insert(0,'player-name',names)
 
-df_max_scaled.to_excel("mean_scaling.xlsx",sheet_name='mean_scaling')
-df_min_max_scaled.to_excel("min_max_scaling.xlsx",sheet_name='min_max_scaling') 
-df_z_scaled.to_excel("z_scaling.xlsx",sheet_name='z_scaling') 
+df_max_scaled.to_csv("mean_scaling.csv")
+df_min_max_scaled.to_csv("min_max_scaling.csv")
+df_z_scaled.to_csv("z_scaling.csv")
 
 #for gen_stats dataframe
 names2=ave_stats['Player-name']
@@ -190,15 +191,15 @@ for column in ave_stats_z.columns:
 ave_stats.insert(0,"Player-name",names2)
 ave_stats_z.insert(0,"Player-name",names2)
 
-ave_stats.to_excel("ave_stats_min_max_scaling.xlsx",sheet_name='min_max_scaling')
-ave_stats_z.to_excel("ave_stats_z_scaling.xlsx",sheet_name='z_scaling')
+ave_stats.to_csv("ave_stats_min_max_scaling.csv")
+ave_stats_z.to_csv("ave_stats_z_scaling.csv")
 
 #storing normalized data to dataframes and then splitting to test_train
-ave_stats_mm = pd.read_excel('ave_stats_min_max_scaling.xlsx')
-ave_stats_z = pd.read_excel('ave_stats_z_scaling.xlsx')
-overall_ms=pd.read_excel('mean_scaling.xlsx')
-overall_mm=pd.read_excel('min_max_scaling.xlsx')
-overall_z=pd.read_excel('z_scaling.xlsx')
+ave_stats_mm = pd.read_excel('ave_stats_min_max_scaling.csv')
+ave_stats_z = pd.read_excel('ave_stats_z_scaling.csv')
+overall_ms=pd.read_excel('mean_scaling.csv')
+overall_mm=pd.read_excel('min_max_scaling.csv')
+overall_z=pd.read_excel('z_scaling.csv')
 
 #splitting into train test_train
 train_ave_mm, test_ave_mm = train_test_split(ave_stats_mm, test_size=0.2, random_state=42, shuffle=True)
@@ -248,7 +249,6 @@ test_path = Path(data_dir, 'test_overall_z.csv')
 train_overall_z.to_csv(train_path, sep=',', index=False)
 test_overall_z.to_csv(test_path, sep=',', index=False)
 
-'''
 player_form = player_form.astype(float)
 print(player_form.dtypes)
 #df['points'].value_counts()

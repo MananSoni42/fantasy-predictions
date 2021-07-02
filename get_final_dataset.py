@@ -127,6 +127,7 @@ def get_row(player_name,season,match,num_innings=5):
     return [player_name] + list(data.flatten())
 
 prefix = lambda p,x: [p.rstrip() + '-' + r for r in x]
+innings = 10
 
 base = [
     'runs-scored', 'average', 'strike-rate',
@@ -139,11 +140,22 @@ base = [
 header = ['player-name']
 header += prefix('all-time',base[:-2])
 header += prefix(f'ipl-last-n',base[:3]+base[5:])
-for i in range(1,5+1):
+for i in range(1,innings+1):
     header += prefix(f'ipl-{i}',base[:3]+base[5:])
+
+header += [ 'Average Points', 'Average Batting-Runs', 'Average wicket per match',
+            'Average sr', 'Average bowl econ', 'Matches played']
 header += ['points']
 
-with open('final-data.csv','w') as out_f:
+ave_stats = dict()
+with open('final_data/ave_stats.csv') as f:
+    reader = csv.reader(f)
+    next(reader)
+    for row in reader:
+        ave_stats[clean(row[1])] = [row[2], row[3], row[4], row[5], row[6], row[7]]
+pprint(ave_stats)
+
+with open('final-data-v2.csv','w') as out_f:
     writer = csv.writer(out_f)
     writer.writerow(header)
     with open('final_data/data-ipl-fantasy.csv') as in_f:
@@ -153,4 +165,4 @@ with open('final-data.csv','w') as out_f:
             print(f'processing {row[:5]}')
             writer.writerow(get_row(clean(row[ipl_header.index('player-name')]),
                                          int(row[ipl_header.index('season')]),
-                                         int(row[ipl_header.index('match')])) + [int(row[ipl_header.index('points')])])
+                                         int(row[ipl_header.index('match')]), num_innings=innings) + ave_stats[row[ipl_header.index('player-name')]] + [int(row[ipl_header.index('points')])])

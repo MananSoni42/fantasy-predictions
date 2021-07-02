@@ -3,7 +3,11 @@ import pandas as pd
 from sklearn.linear_model import LinearRegression
 from sklearn.svm import SVR
 from sklearn.tree import DecisionTreeRegressor
+from sklearn.ensemble import RandomForestRegressor
 from sklearn.neural_network import MLPRegressor
+from xgboost import XGBRFRegressor
+from lightgbm import LGBMRegressor
+
 from sklearn.metrics import mean_squared_error, r2_score
 
 x_train = pd.read_csv('final_data/x-train-s.csv')
@@ -23,25 +27,10 @@ models = {
 	#'RBF SVM': SVR,
 	#'linear SVM': lambda: SVR(kernel='linear'),
 	#'poly SVM': lambda: SVR(kernel='poly'),
-	#'Decision Tree': lambda: DecisionTreeRegressor(max_depth=10),
-	'1 layer NN': lambda: MLPRegressor(	hidden_layer_sizes=(100,),
-										activation='relu',
-										solver='adam',
-										learning_rate='adaptive',
-										max_iter=500,
-										verbose=True,
-										learning_rate_init=0.01,
-										alpha=0.0005
-										),
-	'3 layer NN': lambda: MLPRegressor(	hidden_layer_sizes=(200,100,50),
-										activation='relu',
-										solver='adam',
-										learning_rate='adaptive',
-										max_iter=500,
-										verbose=True,
-										learning_rate_init=0.001,
-										alpha=0.01
-										)	
+	'Decision Tree': lambda: DecisionTreeRegressor(max_depth=10),
+	'ensemble-random-forest': RandomForestRegressor,
+	'ensemble-xgb': XGBRFRegressor,
+	'ensemble-lightgbm': LGBMRegressor,
 }
 
 
