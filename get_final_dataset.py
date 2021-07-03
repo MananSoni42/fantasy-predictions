@@ -2,6 +2,9 @@ import csv
 import numpy as np
 from pprint import pprint
 from utils import clean
+import pandas as pd
+from sklearn.preprocessing import OneHotEncoder
+from sklearn.compose import ColumnTransformer
 
 stadium_data = {}
 with open('final_data/stadium_record.csv') as f:
@@ -148,6 +151,8 @@ header += [ 'Average Points', 'Average Batting-Runs', 'Average wicket per match'
 header += ['points']
 
 ave_stats = dict()
+binning = dict()
+
 with open('final_data/ave_stats.csv') as f:
     reader = csv.reader(f)
     next(reader)
@@ -166,3 +171,17 @@ with open('final-data-v2.csv','w') as out_f:
             writer.writerow(get_row(clean(row[ipl_header.index('player-name')]),
                                          int(row[ipl_header.index('season')]),
                                          int(row[ipl_header.index('match')]), num_innings=innings) + ave_stats[row[ipl_header.index('player-name')]] + [int(row[ipl_header.index('points')])])
+binny = pd.read_csv("final-data-v2.csv")
+bins = [-20,5,25,50,100,150,300]
+labels = [1,2,3,4,5,6]
+binny['binned-points'] = pd.cut(binny['points'], bins=bins, labels=labels)
+binny.to_csv("final-data-v3.csv")
+header2=['range1','range2','range3','range4','range5','range6']
+header2+=header
+columnTransformer = ColumnTransformer([('encoder',
+                                        OneHotEncoder(),
+                                        [152])],
+                                      remainder='passthrough')
+  
+binny = np.array(columnTransformer.fit_transform(binny), dtype = np.str)
+pd.DataFrame(binny).to_csv("final-data-v4.csv",header=header2, index=None)
