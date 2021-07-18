@@ -172,16 +172,16 @@ with open('final-data-v2.csv','w') as out_f:
                                          int(row[ipl_header.index('season')]),
                                          int(row[ipl_header.index('match')]), num_innings=innings) + ave_stats[row[ipl_header.index('player-name')]] + [int(row[ipl_header.index('points')])])
 binny = pd.read_csv("final-data-v2.csv")
-bins = [-20,5,25,50,100,150,300]
-labels = [1,2,3,4,5,6]
+bins = [-14, 6, 22, 37, 62, 300]
+labels = [1,2,3,4,5]
 binny['binned-points'] = pd.cut(binny['points'], bins=bins, labels=labels)
 binny.to_csv("final-data-v3.csv")
-header2=['range1','range2','range3','range4','range5','range6']
+header2=['range1','range2','range3','range4','range5']
 header2+=header
 columnTransformer = ColumnTransformer([('encoder',
                                         OneHotEncoder(),
                                         [152])],
                                       remainder='passthrough')
-  
+
 binny = np.array(columnTransformer.fit_transform(binny), dtype = np.str)
 pd.DataFrame(binny).to_csv("final-data-v4.csv",header=header2, index=None)

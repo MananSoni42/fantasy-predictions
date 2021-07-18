@@ -23,10 +23,10 @@ y_eval = np.array(y_eval['points']).ravel()
 
 
 models = {
-	#'linear regression': LinearRegression,
-	#'RBF SVM': SVR,
-	#'linear SVM': lambda: SVR(kernel='linear'),
-	#'poly SVM': lambda: SVR(kernel='poly'),
+	'linear regression': LinearRegression,
+	'RBF SVM': SVR,
+	'linear SVM': lambda: SVR(kernel='linear'),
+	'poly SVM': lambda: SVR(kernel='poly'),
 	'Decision Tree': lambda: DecisionTreeRegressor(max_depth=10),
 	'ensemble-random-forest': RandomForestRegressor,
 	'ensemble-xgb': XGBRFRegressor,
