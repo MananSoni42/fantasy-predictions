@@ -3,11 +3,11 @@ from sklearn.model_selection import train_test_split
 import pandas as pd
 import numpy as np
 
-df = pd.read_csv('final_data/final-data-v2.csv')
+df = pd.read_csv('final-data-v3.csv')
 
-y = df['points']
-x_mm = df.drop(columns=['points'])
-x_s= df.drop(columns=['points'])
+y = df['binned-points']
+x_mm = df.drop(columns=['points','binned-points'])
+x_s= df.drop(columns=['points','binned-points'])
 
 mm_scaler = MinMaxScaler()
 s_scaler = StandardScaler()

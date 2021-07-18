@@ -84,8 +84,8 @@ def form(debut_url):
         'pers_runs': [],
         'pers_runs_int': [],
         'bowling_record':[],
-        'venue': [],
-        'format': [],
+       # 'venue': [],
+       # 'format': [],
     }
     pers_record['player_name'].append(soup.find('div', {"class":'player-card__details'}).h2.text)
     for table in soup('table'):
@@ -98,11 +98,11 @@ def form(debut_url):
                 pers_record['pers_runs_int']=sum(pers_record['pers_runs_int'])
                 if(table('tr')[0]('th')[2].text=='BOWL'):
                     pers_record['bowling_record'].append(table.tbody('tr')[i]('td')[2].text)
-                    pers_record['venue'].append(table.tbody('tr')[i]('td')[4].text)
-                    pers_record['format'].append(table.tbody('tr')[i]('td')[5].text)
+          #          pers_record['venue'].append(table.tbody('tr')[i]('td')[4].text)
+          #          pers_record['format'].append(table.tbody('tr')[i]('td')[5].text)
                     continue
-                pers_record['venue'].append(table.tbody('tr')[i]('td')[3].text)
-                pers_record['format'].append(table.tbody('tr')[i]('td')[4].text)                                                            
+          #      pers_record['venue'].append(table.tbody('tr')[i]('td')[3].text)
+          #      pers_record['format'].append(table.tbody('tr')[i]('td')[4].text)                                                            
     return pers_record
     
 
@@ -188,14 +188,14 @@ def ipl_season_csv():
     data = []
     header_meta = ['season', 'match', 'status', 'toss-team', 'toss-decision', 'venue','mom']
     metadata = []
-    header_debut = ['player_name','runs','bowling-stats','stadium','format']
+    header_debut = ['player_name','runs','bowling-stats']
     personal_record=[]
     i=0
-    for i in range(40):
+    for i in range(4):
         url = players_url[i]
         url=url+'/matches'
         pers_data_recieve=form(url)
-        personal_record.append([pers_data_recieve['player_name'],pers_data_recieve['pers_runs_int'],pers_data_recieve['bowling_record'],pers_data_recieve['venue'],pers_data_recieve['format']])
+        personal_record.append([pers_data_recieve['player_name'],pers_data_recieve['pers_runs_int'],pers_data_recieve['bowling_record']])
     # for i in range(10):
     #    personal_record[i].append([pers_data_recieve['pers_runs'][i],pers_data_recieve['bowling_record'][i],pers_data_recieve['venue'][i],pers_data_recieve['format'][i]])
     
